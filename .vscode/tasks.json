@@ -1,0 +1,18 @@
+{
+   //在写tasks.json后，应该在命令面板运行下run task看下是否正常，然后再lanch 
+    "version": "0.1.0",
+    "showOutput": "always",
+    "tasks": [
+        {
+            "taskName": "build",
+            "isShellCommand": true,
+            "command": "g++",
+            "args": [
+                "-g", //当调试程序时带-g 参数绑定.o调试代码，最终生产程序需要去除-g;
+                "${workspaceRoot}/*.cpp",
+                "-o",
+                "XmlProc.exe"
+            ]
+        }
+    ]
+}

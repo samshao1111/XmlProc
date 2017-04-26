@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="gbk" ?>
+<global>
+
+<!--
+SBR 安全带提醒装置
+-->
+
+<!--
+控制器通讯
+-->
+<comms>
+
+</comms>
+
+<!--
+数据采集/控制
+-->
+
+<dam type="NDAM-9000" addr="NDAM-9000">
+
+<!--NDAM-4055 8路数字输入 8路数字输出 -->
+<module addr="1" type="NDAM-4055">
+<io type="di" addr="0" var="start_pressed"       name="开始检测按键" desc="1=按下" />
+<io type="di" addr="1" var="cancel_pressed"      name="取消检测按键" desc="1=按下" />
+<io type="di" addr="2" var="sbr_big_top_ok"      name="大气缸上限位" desc="1=就位" />
+<io type="di" addr="3" var="sbr_big_bottom_ok"   name="大气缸下限位" desc="1=就位" />
+<io type="di" addr="4" var="sbr_small_bottom_ok" name="小气缸下限位" desc="1=就位" />
+<io type="di" addr="5" var="sbr_small_top_ok"    name="小气缸上限位" desc="1=就位" />
+<io type="di" addr="6" var="plc_in_ready"        name="PLC就位"      desc="1=就位" />
+<io type="di" addr="7" var="ir_ready"            name="红外就位"     desc="1=就位" />
+<!-- 默认全0 -->
+<io type="do" addr="0" var="motor_power"          name="电机/加热模块电源" desc="1=打开" />
+<io type="do" addr="1" var="heater_power"         name="加热垫电源"        desc="1=打开" />
+<io type="do" addr="2" var="sbr_small_down_power" name="小气缸下降电源"    desc="1=打开" />
+<io type="do" addr="3" var="sbr_small_up_power"   name="小气缸上升电源"    desc="1=打开" />
+<io type="do" addr="4" var="red_buzzer_power"     name="红灯和蜂鸣器电源"    desc="1=打开" />
+<io type="do" addr="5" var="green_power"          name="绿灯电源"    desc="1=打开" />
+<io type="do" addr="6" var="yellow_power"         name="黄灯电源"    desc="1=打开" />
+<io type="do" addr="7" var="airbag_gnd_power"     name="气囊对地电源"    desc="1=打开" />
+</module>
+
+
+
+
+
+
+
+
+
+<!--NDAM-4055 8路数字输入 8路数字输出 -->
+<module addr="5" type="NDAM-4055">
+<io type="di" addr="0" var="adapter1_ready" name="手柄就位1"  desc="1=就位" />
+<io type="di" addr="1" var="adapter2_ready" name="手柄就位2"  desc="1=就位" />
+<io type="di" addr="2" var="adapter3_ready" name="手柄就位3"  desc="1=就位" />
+<io type="di" addr="3" var="adapter4_ready" name="手柄就位4"  desc="1=就位" />
+<io type="di" addr="4" />
+<io type="di" addr="5" />
+<io type="di" addr="6" />
+<io type="di" addr="7" />
+
+
+
+
+
+
+
+
+
+<!-- 默认全0 -->
+<io type="do" addr="0" />
+<io type="do" addr="1" />
+<io type="do" addr="2" />
+<io type="do" addr="3" />
+<io type="do" addr="4" />
+<io type="do" addr="5" />
+<io type="do" addr="6" />
+<io type="do" addr="7" />
+</module>
+
+<!--NDAM-4017 8路模拟输入
+Vmax = 10 / Gain
+V = Vhex / 0xffff(65535) * 2 * Vmax - Vmax
+  = Vhex / 65535 * 2 * Vmax - Vmax
+  = Vhex / 65535 * 2 * (10 / Gain) - (10 / Gain)
+  = (Vhex / 65535 * 20 - 10) / Gain
+
+Gain Vmax
+1    ±10V
+2    ±5V
+4    ±2.5V
+16   ±500mV
+64   ±150mV
+-->
+<module addr="2" type="NDAM-4017">
+<io type="ai" addr="0" var="motor_i"   name="电机/加热模块电流" unit="mA" formula="(@@/65535*20-10)*1000/64/0.05"        value="0x8000" desc="±150mV @0.05Ω" />
+<io type="ai" addr="1" var="heater_i"  name="加热电流"          unit="mA" formula="(@@/65535*20-10)*1000/4/0.1"          value="0x8000" desc="±2.5V @0.1Ω" />
+<io type="ai" addr="2" var="ntc_v"     name="ntc电阻电压"       unit="V"  formula="@@/65535*20-10"                       value="0x8000" desc="±10V 1KΩ 9V电源" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+<io type="ai" addr="3" var="airbag_v"  name="气囊电压"          unit="mV" formula="(@@/65535*20-10)*1000/4"              value="0x8000" desc="±2.5V" />
+<io type="ai" addr="4" var="buckle_v"  name="安全扣电压"        unit="V"  formula="@@/65535*20-10"                       value="0x8000" desc="±10V 1KΩ 9V电源" />
+<io type="ai" addr="5" var="sbr_p"     name="压力传感器"        unit="Kg" formula="(@@/65535*20-10)*1000/64/9*100/2.233" value="0x8000" desc="±500mV 量程 100Kg, = 2.233 mV / V = 输入电压=9V" />
+</module>
+
+<!--NDAM-3412 4路模拟输入 1路模拟输出 2路数字输入 4路数字输出
+-->
+<module addr="3" type="NDAM-3412">
+<io type="ai" addr="0" var="ray_seat"         name="座垫前后" unit="mm" formula="(((2*bit32.rshift(@@,15)-1)*(bit32.band(@@,32767)/32767)*20 - 5.42) * (6 - 1) / (13.24 - 5.42) + 1)*1000" value="0x9900" />
+<io type="ai" addr="1" var="ray_cushion_rear" name="座垫高度" unit="mm" formula="(((2*bit32.rshift(@@,15)-1)*(bit32.band(@@,32767)/32767)*20 - 5.42) * (6 - 1) / (13.24 - 5.42) + 1)*1000" value="0x9900" />
+<io type="ai" addr="2" var="ray_seatback"     name="靠背角度" unit="mm" formula="(((2*bit32.rshift(@@,15)-1)*(bit32.band(@@,32767)/32767)*20 - 5.42) * (6 - 1) / (13.24 - 5.42) + 1)*1000" value="0x9900" />
+<io type="ai" addr="3" />
+
+<io type="ao" addr="0" var="airbag_i" name="气囊电流" unit="mA" formula="@@*20/65535" desc="气囊 电流输出10mA" />
+
+<io type="di" addr="0" />
+<io type="di" addr="1" />
+
+<io type="do" addr="0" />
+<io type="do" addr="1" />
+<io type="do" addr="2" />
+<io type="do" addr="3" />
+</module>
+
+<!--NDAM-2808 8路继电器输出 -->
+<module addr="4" type="NDAM-2808">
+
+<!-- 默认全0 -->
+<io type="do" addr="0" var="ray_power"      name="激光电源"            desc="1=打开" />
+<io type="do" addr="1" var="switch_power"   name="开关盒灯"            desc="1=打开" />
+<io type="do" addr="2" var="test_ok"        name="检测OK"              desc="1=打开" />
+<io type="do" addr="3" var="heater_enable0" name="加热模块使能"        desc="1=打开" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+<io type="do" addr="4" var="heater_enable1" name="加热模块使能"        desc="1=打开" />
+<io type="do" addr="5" var="test_power"     name="安全扣/力传感器电源" desc="1=打开" />
+<io type="do" addr="6"  />
+<io type="do" addr="7" var="scanner_power"     name="扫描枪触发电源" desc="1=打开" />
+
+</module>
+
+</dam>
+
+</global>
