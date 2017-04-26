@@ -1,0 +1,4 @@
+xml文件工具   作者: sam 2017/4/26
+命令格式 ./xmlproc.exe test.xml dest.xml 
+从xml文件argv[1]读取，语法分析，过滤，将排版内容写入指定文件argv[2]中 ; 
+（VSCode + MinGW64为调试环境）
